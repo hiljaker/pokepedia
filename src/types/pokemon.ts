@@ -20,10 +20,18 @@ interface Type {
   type: Model;
 }
 
+interface Ability {
+  ability: Model;
+}
+
 interface Pokemon {
+  abilities: Ability[];
   name: string;
   order: number;
   stats: Stat[];
+  species: Model;
   sprites: Sprite;
   types: Type[];
+  weight: number;
+  height: number;
 }

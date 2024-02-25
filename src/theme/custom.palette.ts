@@ -2,6 +2,7 @@ import { createTheme, PaletteOptions } from "@mui/material";
 
 declare module "@mui/material/styles" {
   interface Palette {
+    primaryGreen: Palette["primary"];
     neutralBg: Palette["primary"];
     neutral100: Palette["primary"];
     neutral200: Palette["primary"];
@@ -15,6 +16,7 @@ declare module "@mui/material/styles" {
   }
 
   interface PaletteOptions {
+    primaryGreen: PaletteOptions["primary"];
     neutralBg: PaletteOptions["primary"];
     neutral100: PaletteOptions["primary"];
     neutral200: PaletteOptions["primary"];
@@ -32,6 +34,7 @@ declare module "@mui/material/styles" {
 const theme = createTheme();
 
 export const colors = {
+  primaryGreen: "#658864",
   neutralBg: "#FFFFF0",
   neutral100: "#171717",
   neutral200: "#262626",
@@ -46,6 +49,10 @@ export const colors = {
 
 export const customPalette: PaletteOptions = {
   // GENERAL //
+  primaryGreen: {
+    main: colors.primaryGreen,
+    contrastText: theme.palette.getContrastText(colors.primaryGreen),
+  },
   neutralBg: {
     main: colors.neutralBg,
     contrastText: theme.palette.getContrastText(colors.neutralBg),

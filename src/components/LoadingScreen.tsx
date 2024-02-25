@@ -7,7 +7,10 @@ const LoadingScreen = () => {
 
   return (
     <Stack height="300px" justifyContent="center">
-      <CircularProgress size={90} sx={{ mx: "auto", color: "#658864" }} />
+      <CircularProgress
+        size={90}
+        sx={{ mx: "auto", color: "primaryGreen.main" }}
+      />
     </Stack>
   );
 };

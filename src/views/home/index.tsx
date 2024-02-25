@@ -18,7 +18,7 @@ const HomeView = () => {
         {isLoading ? (
           <LoadingScreen />
         ) : (
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, md: 3 }}>
             {Children.toArray(
               pokemons?.results.map((pokemon) => {
                 return (

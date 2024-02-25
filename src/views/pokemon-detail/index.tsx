@@ -9,7 +9,23 @@ import Page from "@src/components/Page";
 import Wrapper from "@src/components/Wrapper";
 import { capitalizeEveryWord } from "@src/helpers/capitalizeWord";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, {
+  Children,
+  FC,
+  PropsWithChildren,
+  useEffect,
+  useState,
+} from "react";
+import VarietyChip from "./components/VarietyChip";
+import Profile from "./sections/Profile";
+
+interface LoaderProps extends PropsWithChildren {
+  loading: boolean;
+}
+
+const Loader: FC<LoaderProps> = ({ children, loading }) => {
+  return loading ? <LoadingScreen /> : children;
+};
 
 const PokemonDetailView = () => {
   const { back } = useRouter();
@@ -17,7 +33,10 @@ const PokemonDetailView = () => {
 
   const [selectedVariety, setSelectedVariety] = useState<string>("");
 
-  const { data: pokemonData, isLoading: isLoadingPokemon } =
+  const { data: pokemonData, isLoading: isLoadingPokemon } = useGetPokemon(
+    name as string
+  );
+  const { data: pokemonVarietyData, isLoading: isLoadingPokemonVariety } =
     useGetPokemon(selectedVariety);
   const { data: pokemonSpeciesData, isLoading: isLoadingPokemonSpecies } =
     useGetPokemonSpecies(name as string);
@@ -29,8 +48,6 @@ const PokemonDetailView = () => {
 
     setSelectedVariety(defaultPokemon?.pokemon.name || "");
   }, [pokemonSpeciesData?.varieties]);
-
-  console.log(pokemonSpeciesData);
 
   return (
     <Page bgcolor="neutralBg.main">
@@ -50,16 +67,14 @@ const PokemonDetailView = () => {
           </Typography>
         </Stack>
 
-        {isLoadingPokemon || isLoadingPokemonSpecies ? (
-          <LoadingScreen />
-        ) : (
+        <Loader loading={isLoadingPokemon}>
           <Typography
             typography="kodeMonoMedium"
             fontSize="32px"
             color="neutral300.main"
             textAlign="center"
           >
-            {capitalizeEveryWord(pokemonSpeciesData?.name || "")}
+            {capitalizeEveryWord(pokemonData?.name || "")}
 
             <Typography
               component="span"
@@ -68,10 +83,33 @@ const PokemonDetailView = () => {
               fontSize="32px"
               color="neutral400.main"
             >
-              #{pokemonSpeciesData?.order}
+              #{pokemonData?.order}
             </Typography>
           </Typography>
-        )}
+
+          {(pokemonSpeciesData?.varieties.length || 0) > 1 && (
+            <Stack
+              spacing={1}
+              direction={{ xs: "column", md: "row" }}
+              justifyContent="center"
+              mt={2}
+            >
+              {Children.toArray(
+                pokemonSpeciesData?.varieties.map((variety) => (
+                  <VarietyChip
+                    variety={variety.pokemon.name || ""}
+                    selectedVariety={selectedVariety}
+                    setSelectedVariety={setSelectedVariety}
+                  />
+                ))
+              )}
+            </Stack>
+          )}
+
+          <Loader loading={isLoadingPokemonVariety}>
+            <Profile pokemon={pokemonVarietyData || ({} as Pokemon)} mt={4} />
+          </Loader>
+        </Loader>
       </Wrapper>
     </Page>
   );

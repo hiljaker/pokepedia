@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Container, Stack, Typography } from "@mui/material";
-import { styled } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import useNavbarHeight from "@src/hooks/useNavbarHeight";
 import Wrapper from "./Wrapper";
 
@@ -14,7 +14,7 @@ const Navbar = () => {
   const navbarHeight = useNavbarHeight();
 
   return (
-    <Box bgcolor="#658864" position="fixed" width="100%" zIndex={99}>
+    <Box bgcolor="primaryGreen.main" position="fixed" width="100%" zIndex={99}>
       <Wrapper
         sx={{
           display: "flex",

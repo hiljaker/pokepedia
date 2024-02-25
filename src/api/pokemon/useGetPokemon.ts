@@ -3,13 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 
 const queryKeyPokemon = "pokemon";
 
-const fetchPokemon = async (name: string): Promise<Pokemon | null> => {
+const fetchPokemon = async (name: string): Promise<Pokemon | undefined> => {
   if (name) {
     const { data } = await axios.get<Pokemon>(`/pokemon/${name}`);
     return data;
   }
 
-  return null;
+  return undefined;
 };
 
 const useGetPokemon = (name: string) => {
