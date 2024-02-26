@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import useNavbarHeight from "@src/hooks/useNavbarHeight";
 import Wrapper from "./Wrapper";

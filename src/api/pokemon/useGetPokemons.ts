@@ -3,11 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPokemon } from "..";
 import { Pokemon } from "@src/types/pokemon";
 
-const queryKeyPokemon = "pokemons";
+const queryKeyPokemons = "pokemons";
 const queryKeySelectedPokemons = "selected-pokemons";
 
 const fetchPokemons = async (): Promise<ApiReturnType<Pokemon[]>> => {
-  const { data } = await axios.get<ApiReturnType<Pokemon[]>>("/pokemon");
+  const { data } = await axios.get<ApiReturnType<Pokemon[]>>("/pokemon", {
+    params: { limit: 10000 },
+  });
 
   const details = data.results.map(async (pokemon) => {
     const detail = await fetchPokemon(pokemon.name);
@@ -22,7 +24,7 @@ const fetchPokemons = async (): Promise<ApiReturnType<Pokemon[]>> => {
 
 const useGetPokemons = () => {
   return useQuery({
-    queryKey: [queryKeyPokemon],
+    queryKey: [queryKeyPokemons],
     queryFn: fetchPokemons,
   });
 };
@@ -52,4 +54,5 @@ export {
   useGetPokemons,
   fetchSelectedPokemons,
   useGetSelectedPokemons,
+  queryKeyPokemons,
 };

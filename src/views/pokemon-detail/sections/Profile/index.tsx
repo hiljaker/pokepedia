@@ -22,7 +22,7 @@ const Card = styled(Stack)(({ theme }) => ({
 }));
 
 const Profile: FC<ProfileProps> = ({ pokemon, ...props }) => {
-  const { species, types, abilities } = pokemon || {};
+  const { species, types, abilities, id } = pokemon || {};
 
   const { data } = useGetPokemonSpecies(species?.name || "");
 

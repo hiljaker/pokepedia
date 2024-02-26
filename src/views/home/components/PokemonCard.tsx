@@ -3,8 +3,9 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material";
 import PokemonTypeChip from "@src/components/PokemonTypeChip";
-import { capitalizeEveryWord } from "@src/helpers/capitalizeWord";
+import { unslugString } from "@src/helpers/removeDash";
 import { Pokemon } from "@src/types/pokemon";
+import Link from "next/link";
 import React, { Children, FC } from "react";
 
 interface PokemonCardProps {
@@ -37,36 +38,39 @@ const Image = styled("img")(() => ({}));
 
 const PokemonCard: FC<PokemonCardProps> = ({ pokemon }) => {
   return (
-    <Card direction={{ xs: "row", md: "row" }} spacing={2}>
-      <Image
-        src={pokemon.sprites.other["official-artwork"].front_default}
-        alt={pokemon.name}
-        sx={{
-          width: { xs: "100px", md: "150px" },
-          height: { xs: "100px", md: "150px" },
-          bgcolor: "neutral600.main",
-          borderRadius: "4px",
-        }}
-      />
+    <Link href={{ pathname: pokemon.name }} style={{ textDecoration: "none" }}>
+      <Card direction={{ xs: "row", md: "row" }} spacing={2}>
+        <Image
+          src={pokemon.sprites.other["official-artwork"].front_default}
+          alt={pokemon.name}
+          sx={{
+            minWidth: { xs: "100px", md: "150px" },
+            maxWidth: { xs: "100px", md: "150px" },
+            height: { xs: "100px", md: "150px" },
+            bgcolor: "neutral600.main",
+            borderRadius: "4px",
+          }}
+        />
 
-      <Box>
-        <Number>#{pokemon.order}</Number>
+        <Box>
+          <Number>#{pokemon.id}</Number>
 
-        <Name mb={0.5}>{capitalizeEveryWord(pokemon.name || "")}</Name>
+          <Name mb={0.5}>{unslugString(pokemon.name || "")}</Name>
 
-        <Stack
-          spacing={1}
-          direction={{ xs: "row", md: "column" }}
-          alignItems="start"
-        >
-          {Children.toArray(
-            pokemon.types.map((type) => (
-              <PokemonTypeChip type={type.type.name || ""} fontSize="12px" />
-            ))
-          )}
-        </Stack>
-      </Box>
-    </Card>
+          <Stack
+            spacing={1}
+            direction={{ xs: "row", md: "column" }}
+            alignItems="start"
+          >
+            {Children.toArray(
+              pokemon.types.map((type) => (
+                <PokemonTypeChip type={type.type.name || ""} fontSize="12px" />
+              ))
+            )}
+          </Stack>
+        </Box>
+      </Card>
+    </Link>
   );
 };
 

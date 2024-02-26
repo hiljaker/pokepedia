@@ -1,4 +1,4 @@
-import { PokemonSpecies } from "@src/types/pokemon-species";
+import { EvolutionChain } from "@src/types/evolution-chain";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -9,7 +9,7 @@ const fetchEvolutionChain = async (
 ): Promise<EvolutionChain | undefined> => {
   if (!url) return undefined;
 
-  const { data } = await axios.get(url);
+  const { data } = await axios.get<EvolutionChain>(url);
   return data;
 };
 

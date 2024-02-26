@@ -11,7 +11,6 @@ import {
 import LoadingScreen from "@src/components/LoadingScreen";
 import Page from "@src/components/Page";
 import Wrapper from "@src/components/Wrapper";
-import { capitalizeEveryWord } from "@src/helpers/capitalizeWord";
 import { useParams, useRouter } from "next/navigation";
 import React, {
   Children,
@@ -25,6 +24,8 @@ import Profile from "./sections/Profile";
 import Evolution from "./sections/Evolution";
 import Stat from "./sections/Stat";
 import { Pokemon } from "@src/types/pokemon";
+import { unslugString } from "@src/helpers/removeDash";
+import { EvolutionChain } from "@src/types/evolution-chain";
 
 interface LoaderProps extends PropsWithChildren {
   loading: boolean;
@@ -48,13 +49,13 @@ const PokemonDetailView = () => {
   const { data: pokemonVarietyData, isLoading: isLoadingPokemonVariety } =
     useGetPokemon(selectedVariety);
   const { data: pokemonSpeciesData, isLoading: isLoadingPokemonSpecies } =
-    useGetPokemonSpecies(name as string);
+    useGetPokemonSpecies(pokemonData?.species.name || "");
   const { data: evolutionChainData, isLoading: isLoadingEvolutionChain } =
-    useGetEvolutionChain(pokemonSpeciesData?.evolution_chain.url || "");
+    useGetEvolutionChain(pokemonSpeciesData?.evolution_chain?.url || "");
 
   useEffect(() => {
-    const defaultPokemon = pokemonSpeciesData?.varieties.find(
-      (variety) => variety.is_default
+    const defaultPokemon = pokemonSpeciesData?.varieties?.find(
+      (variety) => variety?.is_default
     );
 
     setSelectedVariety(defaultPokemon?.pokemon.name || "");
@@ -91,7 +92,7 @@ const PokemonDetailView = () => {
             color="neutral300.main"
             textAlign="center"
           >
-            {capitalizeEveryWord(pokemonData?.name || "")}
+            {unslugString(pokemonData?.name || "")}
 
             <Typography
               component="span"
@@ -100,16 +101,18 @@ const PokemonDetailView = () => {
               fontSize={{ xs: "20px", md: "32px" }}
               color="neutral400.main"
             >
-              #{pokemonData?.order}
+              #{pokemonData?.id}
             </Typography>
           </Typography>
 
-          {(pokemonSpeciesData?.varieties.length || 0) > 1 && (
+          {(pokemonSpeciesData?.varieties?.length || 0) > 1 && (
             <Stack
               spacing={1}
+              rowGap={1}
               direction={{ xs: "column", md: "row" }}
               justifyContent="center"
               mt={2}
+              flexWrap="wrap"
             >
               {Children.toArray(
                 pokemonSpeciesData?.varieties.map((variety) => (

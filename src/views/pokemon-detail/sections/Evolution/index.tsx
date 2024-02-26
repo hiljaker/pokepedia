@@ -1,8 +1,9 @@
 import { ChevronRight, ExpandMore } from "@mui/icons-material";
 import { Box, Stack, Typography, useMediaQuery, Theme } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useGetEvolutionChain, useGetSelectedPokemons } from "@src/api";
-import { capitalizeEveryWord } from "@src/helpers/capitalizeWord";
+import { useGetSelectedPokemons } from "@src/api";
+import { unslugString } from "@src/helpers/removeDash";
+import { EvolutionChain } from "@src/types/evolution-chain";
 import React, { Children, ComponentProps, FC, useMemo } from "react";
 
 interface EvolutionProps extends ComponentProps<typeof Box> {
@@ -37,7 +38,8 @@ const Evolution: FC<EvolutionProps> = ({ evolutionChain, ...props }) => {
     return names;
   }, [evolutionChain?.chain.evolves_to, evolutionChain?.chain.species]);
 
-  const { data: pokemonEvolutions } = useGetSelectedPokemons(evolutionChains);
+  const { data: pokemonEvolutions = [] } =
+    useGetSelectedPokemons(evolutionChains);
 
   const mobile = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
@@ -56,8 +58,12 @@ const Evolution: FC<EvolutionProps> = ({ evolutionChain, ...props }) => {
       <Stack
         direction={{ xs: "column", md: "row" }}
         alignItems="center"
-        justifyContent="center"
+        justifyContent={{
+          xs: "center",
+          md: pokemonEvolutions?.length > 3 ? "start" : "center",
+        }}
         spacing={3}
+        overflow="scroll"
       >
         {Children.toArray(
           pokemonEvolutions?.map((evolution, index) => {
@@ -69,14 +75,14 @@ const Evolution: FC<EvolutionProps> = ({ evolutionChain, ...props }) => {
                     textAlign="center"
                     fontSize="20px"
                   >
-                    {capitalizeEveryWord(evolution?.name || "")}{" "}
+                    {unslugString(evolution?.name || "")}{" "}
                     <Typography
                       component="span"
                       typography="kodeMonoMedium"
                       color="neutral400.main"
                       fontSize="20px"
                     >
-                      #{evolution?.order}
+                      #{evolution?.id}
                     </Typography>
                   </Typography>
 

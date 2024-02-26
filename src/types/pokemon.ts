@@ -25,6 +25,8 @@ interface Ability {
 }
 
 export interface Pokemon {
+  id: number;
+  is_default: boolean;
   abilities: Ability[];
   name: string;
   order: number;

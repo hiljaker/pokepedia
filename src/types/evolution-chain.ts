@@ -6,7 +6,7 @@ interface EvolvesTo {
   };
 }
 
-interface EvolutionChain {
+export interface EvolutionChain {
   chain: EvolvesTo;
   id: number;
 }

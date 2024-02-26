@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 const queryKeyPokemonSpecies = "pokemon-species";
 
 const fetchPokemonSpecies = async (name: string): Promise<PokemonSpecies> => {
-  const { data } = await axios.get(`/pokemon-species/${name}`);
+  const { data } = await axios.get<PokemonSpecies>(`/pokemon-species/${name}`);
   return data;
 };
 
