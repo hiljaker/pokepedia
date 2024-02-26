@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material";
+import { unslugString } from "@src/helpers/removeDash";
 import React, { ComponentProps, Dispatch, FC, SetStateAction } from "react";
 
 interface VarietyChipProps {
@@ -36,7 +37,7 @@ const VarietyChip: FC<VarietyChipProps> = ({
       onClick={() => setSelectedVariety(variety)}
       sx={{ textAlign: { xs: "center", md: "left" } }}
     >
-      {variety}
+      {unslugString(variety)}
     </Chip>
   );
 };

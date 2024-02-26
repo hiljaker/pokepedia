@@ -1,9 +1,13 @@
 "use client";
 
 import { ArrowBack } from "@mui/icons-material";
-import { Stack, Typography } from "@mui/material";
-import { useGetPokemon } from "@src/api";
-import { useGetPokemonSpecies } from "@src/api/pokemon-species/useGetPokemonSpecies";
+import { Grid, Stack, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import {
+  useGetEvolutionChain,
+  useGetPokemon,
+  useGetPokemonSpecies,
+} from "@src/api";
 import LoadingScreen from "@src/components/LoadingScreen";
 import Page from "@src/components/Page";
 import Wrapper from "@src/components/Wrapper";
@@ -18,6 +22,9 @@ import React, {
 } from "react";
 import VarietyChip from "./components/VarietyChip";
 import Profile from "./sections/Profile";
+import Evolution from "./sections/Evolution";
+import Stat from "./sections/Stat";
+import { Pokemon } from "@src/types/pokemon";
 
 interface LoaderProps extends PropsWithChildren {
   loading: boolean;
@@ -26,6 +33,8 @@ interface LoaderProps extends PropsWithChildren {
 const Loader: FC<LoaderProps> = ({ children, loading }) => {
   return loading ? <LoadingScreen /> : children;
 };
+
+const Image = styled("img")(() => ({}));
 
 const PokemonDetailView = () => {
   const { back } = useRouter();
@@ -40,6 +49,8 @@ const PokemonDetailView = () => {
     useGetPokemon(selectedVariety);
   const { data: pokemonSpeciesData, isLoading: isLoadingPokemonSpecies } =
     useGetPokemonSpecies(name as string);
+  const { data: evolutionChainData, isLoading: isLoadingEvolutionChain } =
+    useGetEvolutionChain(pokemonSpeciesData?.evolution_chain.url || "");
 
   useEffect(() => {
     const defaultPokemon = pokemonSpeciesData?.varieties.find(
@@ -57,7 +68,7 @@ const PokemonDetailView = () => {
           alignItems="center"
           spacing={1}
           color="neutral300.main"
-          sx={{ cursor: "pointer" }}
+          sx={{ cursor: "pointer", width: "fit-content" }}
           onClick={back}
           mb={4}
         >
@@ -67,10 +78,16 @@ const PokemonDetailView = () => {
           </Typography>
         </Stack>
 
-        <Loader loading={isLoadingPokemon}>
+        <Loader
+          loading={
+            isLoadingPokemon ||
+            isLoadingPokemonSpecies ||
+            isLoadingEvolutionChain
+          }
+        >
           <Typography
             typography="kodeMonoMedium"
-            fontSize="32px"
+            fontSize={{ xs: "32px", md: "52px" }}
             color="neutral300.main"
             textAlign="center"
           >
@@ -78,9 +95,9 @@ const PokemonDetailView = () => {
 
             <Typography
               component="span"
-              ml={2}
+              ml={{ xs: 1, md: 2 }}
               typography="kodeMonoMedium"
-              fontSize="32px"
+              fontSize={{ xs: "20px", md: "32px" }}
               color="neutral400.main"
             >
               #{pokemonData?.order}
@@ -107,7 +124,35 @@ const PokemonDetailView = () => {
           )}
 
           <Loader loading={isLoadingPokemonVariety}>
-            <Profile pokemon={pokemonVarietyData || ({} as Pokemon)} mt={4} />
+            <Stack alignItems="center" mt={4}>
+              <Image
+                src={
+                  pokemonVarietyData?.sprites?.other["official-artwork"]
+                    .front_default
+                }
+                alt={pokemonVarietyData?.name}
+                sx={{
+                  width: "250px",
+                  height: "250px",
+                  mx: "auto",
+                  mb: 6,
+                }}
+              />
+            </Stack>
+
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={6}>
+                <Profile pokemon={pokemonVarietyData || ({} as Pokemon)} />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Stat stats={pokemonVarietyData?.stats || []} />
+              </Grid>
+            </Grid>
+
+            <Evolution
+              mt={5}
+              evolutionChain={evolutionChainData || ({} as EvolutionChain)}
+            />
           </Loader>
         </Loader>
       </Wrapper>

@@ -1,4 +1,4 @@
-interface Stat {
+export interface Stat {
   base_stat: number;
   effort: number;
   stat: Model;
@@ -24,7 +24,7 @@ interface Ability {
   ability: Model;
 }
 
-interface Pokemon {
+export interface Pokemon {
   abilities: Ability[];
   name: string;
   order: number;

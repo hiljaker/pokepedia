@@ -3,6 +3,7 @@ import { Box, Container, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import useNavbarHeight from "@src/hooks/useNavbarHeight";
 import Wrapper from "./Wrapper";
+import Link from "next/link";
 
 const Title = styled(Typography)(({ theme }) => ({
   ...theme.typography.kodeMonoMedium,
@@ -28,7 +29,9 @@ const Navbar = () => {
           alignItems="center"
           justifyContent="space-between"
         >
-          <Title>PokePedia</Title>
+          <Link href="/" style={{ textDecoration: "none" }}>
+            <Title>PokePedia</Title>
+          </Link>
         </Stack>
       </Wrapper>
     </Box>

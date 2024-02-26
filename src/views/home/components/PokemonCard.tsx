@@ -4,6 +4,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { styled } from "@mui/material";
 import PokemonTypeChip from "@src/components/PokemonTypeChip";
 import { capitalizeEveryWord } from "@src/helpers/capitalizeWord";
+import { Pokemon } from "@src/types/pokemon";
 import React, { Children, FC } from "react";
 
 interface PokemonCardProps {

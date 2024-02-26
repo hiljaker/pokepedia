@@ -1,8 +1,9 @@
 import React, { Children, ComponentProps, FC } from "react";
 import { styled } from "@mui/material/styles";
 import { Box, Stack, Typography } from "@mui/material";
-import { useGetPokemonSpecies } from "@src/api/pokemon-species/useGetPokemonSpecies";
+import { useGetPokemonSpecies } from "@src/api";
 import PokemonTypeChip from "@src/components/PokemonTypeChip";
+import { Pokemon } from "@src/types/pokemon";
 
 interface ProfileProps extends ComponentProps<typeof Stack> {
   pokemon: Pokemon;
@@ -20,10 +21,8 @@ const Card = styled(Stack)(({ theme }) => ({
   },
 }));
 
-const Image = styled("img")(() => ({}));
-
 const Profile: FC<ProfileProps> = ({ pokemon, ...props }) => {
-  const { name, sprites, species, types, abilities } = pokemon || {};
+  const { species, types, abilities } = pokemon || {};
 
   const { data } = useGetPokemonSpecies(species?.name || "");
 
@@ -36,104 +35,92 @@ const Profile: FC<ProfileProps> = ({ pokemon, ...props }) => {
     .join(", ");
 
   return (
-    <Stack {...props} direction="column" spacing={2}>
-      <Image
-        src={sprites?.other["official-artwork"].front_default}
-        alt={name}
-        sx={{
-          width: "250px",
-          height: "250px",
-          alignSelf: "center",
-        }}
-      />
-
-      <Stack
-        spacing={3}
-        flexGrow={1}
-        bgcolor="neutral700.main"
-        p="16px 24px"
-        borderRadius="16px"
-        boxShadow="10px 10px 0px 0px rgba(0,0,0,0.5)"
+    <Stack
+      {...props}
+      spacing={3}
+      bgcolor="neutral700.main"
+      p="16px 24px"
+      borderRadius="16px"
+      boxShadow="10px 10px 0px 0px rgba(0,0,0,0.5)"
+    >
+      <Typography
+        typography="kodeMono"
+        fontSize={{ md: "18px" }}
+        color="neutral100.main"
       >
+        {pokemonDescription}
+      </Typography>
+
+      <Stack spacing={1}>
+        <Typography
+          typography="kodeMonoBold"
+          fontSize={{ xs: "20px", md: "24px" }}
+          color="neutral100.main"
+        >
+          Type
+        </Typography>
+
+        <Stack direction="row" spacing={1}>
+          {Children.toArray(
+            types?.map((type) => (
+              <PokemonTypeChip type={type.type.name || ""} />
+            ))
+          )}
+        </Stack>
+      </Stack>
+
+      <Stack spacing={1}>
+        <Typography
+          typography="kodeMonoBold"
+          fontSize={{ xs: "20px", md: "24px" }}
+          color="neutral100.main"
+        >
+          Ability
+        </Typography>
+
         <Typography
           typography="kodeMono"
           fontSize={{ md: "18px" }}
           color="neutral100.main"
         >
-          {pokemonDescription}
+          {pokemonAbilities}
+        </Typography>
+      </Stack>
+
+      <Stack spacing={1}>
+        <Typography
+          typography="kodeMonoBold"
+          fontSize={{ xs: "20px", md: "24px" }}
+          color="neutral100.main"
+        >
+          Weight
         </Typography>
 
-        <Stack spacing={1}>
-          <Typography
-            typography="kodeMonoBold"
-            fontSize={{ xs: "20px", md: "24px" }}
-            color="neutral100.main"
-          >
-            Type
-          </Typography>
+        <Typography
+          typography="kodeMono"
+          fontSize={{ md: "18px" }}
+          color="neutral100.main"
+        >
+          {(pokemon.weight || 0) / 10} kg
+        </Typography>
+      </Stack>
 
-          <Stack direction="row" spacing={1}>
-            {Children.toArray(
-              types?.map((type) => (
-                <PokemonTypeChip type={type.type.name || ""} />
-              ))
-            )}
-          </Stack>
-        </Stack>
+      <Stack spacing={1}>
+        <Typography
+          typography="kodeMonoBold"
+          fontSize="24px"
+          color="neutral100.main"
+        >
+          Height
+        </Typography>
 
-        <Stack spacing={1}>
-          <Typography
-            typography="kodeMonoBold"
-            fontSize={{ xs: "20px", md: "24px" }}
-            color="neutral100.main"
-          >
-            Ability
-          </Typography>
-
-          <Typography
-            typography="kodeMono"
-            fontSize={{ md: "18px" }}
-            color="neutral100.main"
-          >
-            {pokemonAbilities}
-          </Typography>
-        </Stack>
-
-        <Stack spacing={1}>
-          <Typography
-            typography="kodeMonoBold"
-            fontSize={{ xs: "20px", md: "24px" }}
-            color="neutral100.main"
-          >
-            Weight
-          </Typography>
-
-          <Typography
-            typography="kodeMono"
-            fontSize={{ md: "18px" }}
-            color="neutral100.main"
-          >
-            {(pokemon.weight || 0) / 10} kg
-          </Typography>
-        </Stack>
-
-        <Stack spacing={1}>
-          <Typography
-            typography="kodeMonoBold"
-            fontSize="24px"
-            color="neutral100.main"
-          >
-            Height
-          </Typography>
-
-          <Typography
-            typography="kodeMono"
-            fontSize={{ md: "18px" }}
-            color="neutral100.main"
-          >
-            {(pokemon.height || 0) * 10} cm
-          </Typography>
-        </Stack>
+        <Typography
+          typography="kodeMono"
+          fontSize={{ md: "18px" }}
+          color="neutral100.main"
+        >
+          {(pokemon.height || 0) * 10} cm
+        </Typography>
       </Stack>
     </Stack>
   );
