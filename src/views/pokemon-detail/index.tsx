@@ -11,7 +11,7 @@ import {
 import LoadingScreen from "@src/components/LoadingScreen";
 import Page from "@src/components/Page";
 import Wrapper from "@src/components/Wrapper";
-import { useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import React, {
   Children,
   FC,
@@ -46,10 +46,11 @@ const PokemonDetailView = () => {
   const { data: pokemonData, isLoading: isLoadingPokemon } = useGetPokemon(
     name as string
   );
+
   const { data: pokemonVarietyData, isLoading: isLoadingPokemonVariety } =
     useGetPokemon(selectedVariety);
   const { data: pokemonSpeciesData, isLoading: isLoadingPokemonSpecies } =
-    useGetPokemonSpecies(pokemonData?.species.name || "");
+    useGetPokemonSpecies(pokemonData?.species?.name || "");
   const { data: evolutionChainData, isLoading: isLoadingEvolutionChain } =
     useGetEvolutionChain(pokemonSpeciesData?.evolution_chain?.url || "");
 
@@ -58,8 +59,14 @@ const PokemonDetailView = () => {
       (variety) => variety?.is_default
     );
 
-    setSelectedVariety(defaultPokemon?.pokemon.name || "");
+    setSelectedVariety(defaultPokemon?.pokemon?.name || "");
   }, [pokemonSpeciesData?.varieties]);
+
+  useEffect(() => {
+    if (!isLoadingPokemon && !pokemonData) {
+      notFound();
+    }
+  }, [isLoadingPokemon, pokemonData]);
 
   return (
     <Page bgcolor="neutralBg.main">
@@ -117,7 +124,7 @@ const PokemonDetailView = () => {
               {Children.toArray(
                 pokemonSpeciesData?.varieties.map((variety) => (
                   <VarietyChip
-                    variety={variety.pokemon.name || ""}
+                    variety={variety?.pokemon?.name || ""}
                     selectedVariety={selectedVariety}
                     setSelectedVariety={setSelectedVariety}
                   />
@@ -130,8 +137,8 @@ const PokemonDetailView = () => {
             <Stack alignItems="center" mt={4}>
               <Image
                 src={
-                  pokemonVarietyData?.sprites?.other["official-artwork"]
-                    .front_default
+                  pokemonVarietyData?.sprites?.other?.["official-artwork"]
+                    ?.front_default
                 }
                 alt={pokemonVarietyData?.name}
                 sx={{

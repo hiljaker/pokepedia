@@ -16,19 +16,19 @@ const Evolution: FC<EvolutionProps> = ({ evolutionChain, ...props }) => {
   const evolutionChains = useMemo<string[]>(() => {
     const names: string[] = [];
 
-    if (evolutionChain?.chain.species) {
-      names.push(evolutionChain.chain.species.name);
+    if (evolutionChain?.chain?.species) {
+      names.push(evolutionChain?.chain?.species?.name);
 
       if (
-        evolutionChain.chain.evolves_to &&
-        evolutionChain.chain.evolves_to.length > 0
+        evolutionChain?.chain?.evolves_to &&
+        evolutionChain?.chain?.evolves_to?.length > 0
       ) {
-        for (const evolution of evolutionChain.chain.evolves_to) {
-          names.push(evolution.species.name);
+        for (const evolution of evolutionChain?.chain?.evolves_to) {
+          names.push(evolution?.species?.name);
 
-          if (evolution.evolves_to && evolution.evolves_to.length > 0) {
-            for (const finalEvolution of evolution.evolves_to) {
-              names.push(finalEvolution.species.name);
+          if (evolution?.evolves_to && evolution?.evolves_to?.length > 0) {
+            for (const finalEvolution of evolution?.evolves_to) {
+              names.push(finalEvolution?.species?.name);
             }
           }
         }
@@ -36,7 +36,7 @@ const Evolution: FC<EvolutionProps> = ({ evolutionChain, ...props }) => {
     }
 
     return names;
-  }, [evolutionChain?.chain.evolves_to, evolutionChain?.chain.species]);
+  }, [evolutionChain?.chain?.evolves_to, evolutionChain?.chain?.species]);
 
   const { data: pokemonEvolutions = [] } =
     useGetSelectedPokemons(evolutionChains);
@@ -92,7 +92,8 @@ const Evolution: FC<EvolutionProps> = ({ evolutionChain, ...props }) => {
                       height: { xs: "150px", md: "250px" },
                     }}
                     src={
-                      evolution?.sprites.other["official-artwork"].front_default
+                      evolution?.sprites?.other?.["official-artwork"]
+                        ?.front_default
                     }
                     alt={evolution?.name}
                   />
