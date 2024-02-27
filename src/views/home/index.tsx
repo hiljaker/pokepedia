@@ -46,7 +46,7 @@ const HomeView = () => {
   const typeQuery = get("type");
 
   const { data: typesData } = useGetPokemonTypes();
-  const { data, isLoading } = useGetPokemons(typeQuery as string);
+  const { data, isLoading, isFetching } = useGetPokemons(typeQuery as string);
 
   const initialPokemons = data?.results.filter((result) => result.is_default);
   const [pokemons, setPokemons] = useState(initialPokemons);
@@ -118,92 +118,89 @@ const HomeView = () => {
   return (
     <Page sx={{ bgcolor: "neutralBg.main" }}>
       <Wrapper sx={{ py: "24px", minHeight: "100vh" }}>
-        {isLoading ? (
-          <LoadingScreen />
-        ) : (
-          <Box>
-            <Stack mb={4} direction={{ xs: "column", md: "row" }} spacing={2}>
+        <Stack mb={4} direction={{ xs: "column", md: "row" }} spacing={2}>
+          <TextInput
+            {...getFieldProps("search")}
+            size="small"
+            placeholder="Search by pokemon name..."
+            sx={{ width: { xs: "100%", md: "300px" } }}
+          />
+
+          <Autocomplete
+            options={["all", ...(pokemonTypes || [])]}
+            value={values.type}
+            renderInput={(params) => (
               <TextInput
-                {...getFieldProps("search")}
+                {...params}
                 size="small"
-                placeholder="Search by pokemon name..."
+                placeholder="Filter by pokemon type"
                 sx={{ width: { xs: "100%", md: "300px" } }}
               />
+            )}
+            renderOption={(renderProps, option) => {
+              return (
+                <MenuItem
+                  {...renderProps}
+                  key={option}
+                  sx={{ fontFamily: "Kode Mono, monospace" }}
+                >
+                  {option}
+                </MenuItem>
+              );
+            }}
+            onChange={(_e, value) => setFieldValue("type", value)}
+          />
 
-              <Autocomplete
-                options={["all", ...(pokemonTypes || [])]}
-                renderInput={(params) => (
-                  <TextInput
-                    {...params}
-                    size="small"
-                    placeholder="Filter by pokemon type"
-                    sx={{ width: { xs: "100%", md: "300px" } }}
-                  />
-                )}
-                renderOption={(renderProps, option) => {
+          <Button
+            onClick={() => handleSubmit()}
+            variant="contained"
+            sx={{
+              backgroundColor: "primaryGreen.main",
+              boxShadow: "none",
+              "&:hover": {
+                backgroundColor: "primaryGreen.main",
+                boxShadow: "5px 5px 0px 0px rgba(0,0,0,0.5)",
+              },
+            }}
+          >
+            <Search />
+          </Button>
+        </Stack>
+
+        {isLoading || isFetching ? (
+          <LoadingScreen />
+        ) : pokemons?.length ? (
+          <>
+            <Grid container spacing={{ xs: 2, md: 3 }}>
+              {Children.toArray(
+                pokemons?.slice(startIndex, endIndex).map((pokemon) => {
                   return (
-                    <MenuItem
-                      {...renderProps}
-                      key={option}
-                      sx={{ fontFamily: "Kode Mono, monospace" }}
-                    >
-                      {option}
-                    </MenuItem>
+                    <Grid item xs={12} sm={4} lg={3}>
+                      <PokemonCard pokemon={pokemon} />
+                    </Grid>
                   );
-                }}
-                onChange={(_e, value) => setFieldValue("type", value)}
-              />
+                })
+              )}
+            </Grid>
 
-              <Button
-                onClick={() => handleSubmit()}
-                variant="contained"
+            <Box width="fit-content" alignSelf="center" mt={4} mx="auto">
+              <Pagination
+                count={count}
+                page={page}
+                onChange={(_e, value: number) => handleChangePage(value)}
+                size="small"
                 sx={{
-                  backgroundColor: "primaryGreen.main",
-                  boxShadow: "none",
-                  "&:hover": {
-                    backgroundColor: "primaryGreen.main",
-                    boxShadow: "5px 5px 0px 0px rgba(0,0,0,0.5)",
+                  button: {
+                    fontFamily: "Kode Mono, monospace",
+                    fontWeight: 700,
+                    color: "neutral100.main",
                   },
                 }}
-              >
-                <Search />
-              </Button>
-            </Stack>
-
-            {pokemons?.length ? (
-              <>
-                <Grid container spacing={{ xs: 2, md: 3 }}>
-                  {Children.toArray(
-                    pokemons?.slice(startIndex, endIndex).map((pokemon) => {
-                      return (
-                        <Grid item xs={12} sm={4} lg={3}>
-                          <PokemonCard pokemon={pokemon} />
-                        </Grid>
-                      );
-                    })
-                  )}
-                </Grid>
-
-                <Box width="fit-content" alignSelf="center" mt={4} mx="auto">
-                  <Pagination
-                    count={count}
-                    page={page}
-                    onChange={(_e, value: number) => handleChangePage(value)}
-                    size="small"
-                    sx={{
-                      button: {
-                        fontFamily: "Kode Mono, monospace",
-                        fontWeight: 700,
-                        color: "neutral100.main",
-                      },
-                    }}
-                  />
-                </Box>
-              </>
-            ) : (
-              <EmptyScreen />
-            )}
-          </Box>
+              />
+            </Box>
+          </>
+        ) : (
+          <EmptyScreen />
         )}
       </Wrapper>
     </Page>
